@@ -1,7 +1,5 @@
 "use strict";
 
-const cmp = (a, b) => (a < b ? -1 : a > b ? 1 : 0);
-
 const matcher = list => val =>
   (pos => (pos < 0 ? list.length : pos))(
     list.findIndex(t =>
@@ -18,7 +16,7 @@ const rankMatcher = list =>
     new Map(list.map((t, i) => [t, i - list.length]))
   );
 
-const orderer = m => (a, b) => m(a) - m(b) || cmp(a, b);
+const orderer = (m, cmp) => (a, b) => m(a) - m(b) || cmp(a, b);
 
 const cachedMatcher = match =>
   (cache => val =>
@@ -27,15 +25,15 @@ const cachedMatcher = match =>
         ? (rank => (cache.set(val, rank), rank))(match(val))
         : idx)(cache.get(val)))(new Map());
 
-// List has no RegExp, Function
-const noMagic = list => orderer(rankMatcher(list));
-// List has RegExp and/or Function
-const magic = list => orderer(cachedMatcher(matcher(list)));
-// List is a ranking function => rank || -1
-const rank = list => orderer(cachedMatcher(list));
+// Choose implementation based on list type
+const impl = list =>
+  list instanceof Function
+    ? list => cachedMatcher(list)
+    : list.some(t => t instanceof RegExp || t instanceof Function)
+    ? list => cachedMatcher(matcher(list))
+    : list => rankMatcher(list);
 
-const hasMagic = list =>
-  list.some(t => t instanceof RegExp || t instanceof Function);
+// Default comparison
+const defCmp = (a, b) => (a < b ? -1 : a > b ? 1 : 0);
 
-module.exports = list =>
-  (list instanceof Function ? rank : hasMagic(list) ? magic : noMagic)(list);
+module.exports = (list, cmp) => orderer(impl(list)(list), cmp || defCmp);
