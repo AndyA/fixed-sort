@@ -104,7 +104,7 @@ const orderBook = fixedSort([
 
 Predicate functions will be called once for each distinct value in the array being sorted. 
 
-## Fallback Comparator
+## Fallback comparator
 
 The book example has a gotcha. All of the chapters are in the same group and all of the indexes are in another group. The entries within each group are sorted by their natural ordering (what you get if you call `Array.sort()` with no comparator function). That means that "Chapter 20" will come before "Chapter 3". That's not a feature of this module - it's just how lexical ordering works.
 
