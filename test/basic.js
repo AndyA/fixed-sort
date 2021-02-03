@@ -163,3 +163,29 @@ tap.test("fallback with interactions", async () => {
   data.sort(fs);
   tap.same(data, want);
 });
+
+tap.test("object allowed", async () => {
+  const first = { tag: "first" };
+  const second = { tag: "second" };
+  const third = { tag: "third" };
+
+  const fs = fixedSort(["B", "AA", first, second, third]);
+
+  const data = [third, "B", second, "AA", "C", third, first];
+  const want = ["B", "AA", first, second, third, third, "C"];
+  data.sort(fs);
+  tap.same(data, want);
+});
+
+tap.test("object allowed with non-literals", async () => {
+  const first = { tag: "first" };
+  const second = { tag: "second" };
+  const third = { tag: "third" };
+
+  const fs = fixedSort([/A{2,}/, first, second, third]);
+
+  const data = [third, "B", second, "AA", "C", third, first];
+  const want = ["AA", first, second, third, third, "B", "C"];
+  data.sort(fs);
+  tap.same(data, want);
+});
