@@ -89,7 +89,7 @@ console.log(book);
 //  ];
 ```
 
-For completely general matching the ordering list may include predicate functions. Any predicate functions will be called for each value. The above example could instead have been written using predicate functions.
+The ordering list may also include predicate functions. The above example could instead have been written using predicate functions.
 
 ```javascript
 // Use functions to match all items of a class
@@ -102,7 +102,7 @@ const orderBook = fixedSort([
 ]);
 ```
 
-Any predicate functions will only be called once for each distinct value in the input array.
+Predicate functions will be called for each distinct value in the array being sorted. 
 
 ## Fallback ordering
 
@@ -192,7 +192,7 @@ We saw that each entry in the ordering list can be
 * a RegExp
 * a predicate function
 
-For complete flexibility, instead of passing an ordering list you may pass a function which takes each value and returns its corresponding rank in the resulting sort.
+For maximum flexibility, instead of passing an ordering list you may pass a function which takes each value and returns its corresponding rank in the resulting sort.
 
 This highly contrived ranker sorts in this order:
 
@@ -243,7 +243,7 @@ console.log(data);
 //  ];
 ```
 
-The ranking function maps values to the groups in which they belong. The values that denote groups don't have to be integers (as in the example above); in fact they don't even have to be numbers although that's often a convenient choice.
+The ranking function maps values to the groups in which they belong. The values that denote groups don't have to be integers (as in the example above); in fact they don't even have to be numbers although that's often a convenient choice. The ranking function will be called once for each distinct value in the array being sorted.
 
 ### Performance
 
