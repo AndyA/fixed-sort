@@ -106,7 +106,7 @@ Predicate functions will be called once for each distinct value in the array bei
 
 ## Fallback comparator
 
-The book example has a gotcha. All of the chapters are in the same group and all of the indexes are in another group. The entries within each group are sorted by their natural ordering (what you get if you call `Array.sort()` with no comparator function). That means that "Chapter 20" will come before "Chapter 3". That's not a feature of this module - it's just how lexical ordering works.
+The book example has a gotcha. All of the chapters are in the same group and all of the indexes are in another group. The entries within each group are sorted by their natural ordering (what you get if you call `Array.sort()` with no comparator function). That means that "Chapter 20" will come before "Chapter 3". That's not a feature of this module - it's just how lexical ordering works: "2" comes before "3".
 
 We can fix it by providing a fallback comparator function which looks for embedded numbers and orders by them if possible. Here's the corrected code.
 
