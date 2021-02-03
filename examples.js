@@ -214,20 +214,20 @@ if (0) {
   // No practical use is known for this...
   data.sort(fixedSort(ranker));
   console.log(data);
-  [
-    7, // odd positive integers
-    9,
-    11,
-    2, // even positive integers
-    4,
-    null, // nulls
-    null,
-    -3.2, // negative non-integers
-    1.3, // positive non-integers
-    3.14,
-    "f", // everything else
-    -4, // even negative integers
-    -3, // odd negative integers
-    -1
-  ];
+  //  [
+  //    7, // odd positive integers
+  //    9,
+  //    11,
+  //    2, // even positive integers
+  //    4,
+  //    null, // nulls
+  //    null,
+  //    -3.2, // negative non-integers
+  //    1.3, // positive non-integers
+  //    3.14,
+  //    "f", // everything else
+  //    -4, // even negative integers
+  //    -3, // odd negative integers
+  //    -1
+  //  ];
 }

@@ -1,10 +1,10 @@
 # fixed-sort
 
-Sort comparison function with predefined ordering
+Make a sort comparator function which provides for arbitrary orderings.
 
 ## Fixed ordering
 
-The `Array.sort()` method accepts an optional comparison function. `fixedSort` generates a comparison function that will place a set of fixed items at the start of the sorted data, in the order you specify, with all other items at the end of the array in natural order.
+The `Array.sort()` method accepts an optional comparator function. `fixedSort` generates a comparator function that will place a set of identified items at the start of the sorted data, in the order you specify, with all other items at the end of the array in natural order.
 
 ```javascript
 const fixedSort = require("fixed-sort");
@@ -51,7 +51,7 @@ console.log(data);
 In the example above the order of the sort is defined by a list of string literals. Sometimes you want to group whole classes of things together. In the next example all of a book's chapters and all of its indexes are grouped together.
 
 ```javascript
-const fixedSort = require(".");
+const fixedSort = require("fixed-sort");
 
 // This book has got out of shape
 const book = [
@@ -89,13 +89,7 @@ console.log(book);
 //  ];
 ```
 
-Each entry in the ordering list can be
-
-* a literal object (not just strings)
-* a RegExp
-* a predicate function
-
-Any predicate functions will be called for each value. The above example could instead have been written using predicate functions.
+For completely general matching the ordering list may include predicate functions. Any predicate functions will be called for each value. The above example could instead have been written using predicate functions.
 
 ```javascript
 // Use functions to match all items of a class
@@ -108,14 +102,16 @@ const orderBook = fixedSort([
 ]);
 ```
 
+Any predicate functions will only be called once for each distinct value in the input array.
+
 ## Fallback ordering
 
-The book example has a gotcha. All of the chapters are in the same group and all of the indexes are in another group. The entries within this group are ordered by their natural ordering (what you get if you call `Array.sort()` with no comparison function). That would mean that "Chapter 10" will come before "Chapter 2". That's not a feature of this module - it's just how lexical ordering works.
+The book example has a gotcha. All of the chapters are in the same group and all of the indexes are in another group. The entries within this group are ordered by their natural ordering (what you get if you call `Array.sort()` with no comparator function). That would mean that "Chapter 10" will come before "Chapter 2". That's not a feature of this module - it's just how lexical ordering works.
 
 We can fix it by providing a fallback ordering function which looks for embedded numbers and orders by them if possible.
 
 ```javascript
-const fixedSort = require(".");
+const fixedSort = require("fixed-sort");
 
 // This book has got out of shape
 const book = [
@@ -174,10 +170,10 @@ Now Chapter 20 is in the right place.
 
 ### Using a fixedSort as a fallback
 
-The fallback function is a sort comparison function - so you can use a nested `fixedSort()` function.
+The fallback function is a sort comparator function - so you can use a nested `fixedSort()` function.
 
 ```javascript
-const fixedSort = require(".");
+const fixedSort = require("fixed-sort");
 const data = ["xA", "xB", "xC", "yA", "yB", "yC"];
 
 // Nested fixedSort
@@ -190,7 +186,13 @@ console.log(data);
 
 ### Passing a ranking function.
 
-Finally, instead of a list of terms that define the ordering you may pass a function which takes each value and returns its corresponding rank in the resulting sort.
+We saw that each entry in the ordering list can be
+
+* a literal object (not just strings)
+* a RegExp
+* a predicate function
+
+For complete flexibility, instead of passing an ordering list you may pass a function which takes each value and returns its corresponding rank in the resulting sort.
 
 This highly contrived ranker sorts in this order:
 
@@ -204,7 +206,7 @@ This highly contrived ranker sorts in this order:
 8. even positive integers
 
 ```javascript
-const fixedSort = require(".");
+const fixedSort = require("fixed-sort");
 
 const data = [2, 1.3, 4, 7, null, -4, -3, 3.14, 9, null, -3.2, -1, 11, "f"];
 
@@ -241,9 +243,11 @@ console.log(data);
 //  ];
 ```
 
+The ranking function maps values to the groups in which they belong. The values that denote groups don't have to be integers (as in the example above); in fact they don't even have to be numbers although that's often a convenient choice.
+
 ### Performance
 
-Each value in the array being sorted is resolved into its sort rank only once - even though the sort algorithm may visit it many times. The cache is discarded when the function returned by `fixedSort()` goes out of scope.
+Each value in the array being sorted is resolved into its sort rank only once - even though the sort algorithm may visit it many times. The cache for these values is discarded when the function returned by `fixedSort()` goes out of scope.
 
 ## License
 
