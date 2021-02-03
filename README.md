@@ -249,7 +249,7 @@ console.log(data);
 
 The ranking function maps values to the groups in which they belong. The values that denote groups don't have to be integers (as in the example above); in fact they don't even have to be numbers although that's often a convenient choice. The ranking function will be called once for each distinct value in the array being sorted.
 
-### Performance
+### Performance and memory use
 
 Each value in the array being sorted is resolved into its sort rank only once - even though the sort algorithm may visit it many times. The cache for these values is discarded when the function returned by `fixedSort()` goes out of scope.
 
