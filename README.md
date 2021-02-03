@@ -1,6 +1,6 @@
 # fixed-sort
 
-Make a sort comparator function which provides for arbitrary orderings.
+Make a sort comparator function for arbitrary orderings.
 
 ## Fixed ordering
 
@@ -102,13 +102,13 @@ const orderBook = fixedSort([
 ]);
 ```
 
-Predicate functions will be called for each distinct value in the array being sorted. 
+Predicate functions will be called once for each distinct value in the array being sorted. 
 
-## Fallback ordering
+## Fallback Comparator
 
-The book example has a gotcha. All of the chapters are in the same group and all of the indexes are in another group. The entries within this group are ordered by their natural ordering (what you get if you call `Array.sort()` with no comparator function). That would mean that "Chapter 10" will come before "Chapter 2". That's not a feature of this module - it's just how lexical ordering works.
+The book example has a gotcha. All of the chapters are in the same group and all of the indexes are in another group. The entries within each group are sorted by their natural ordering (what you get if you call `Array.sort()` with no comparator function). That means that "Chapter 20" will come before "Chapter 3". That's not a feature of this module - it's just how lexical ordering works.
 
-We can fix it by providing a fallback ordering function which looks for embedded numbers and orders by them if possible.
+We can fix it by providing a fallback comparator function which looks for embedded numbers and orders by them if possible. Here's the corrected code.
 
 ```javascript
 const fixedSort = require("fixed-sort");
@@ -126,28 +126,32 @@ const book = [
   "Chapter 2"
 ];
 
-// Default ordering
+// Natural ordering
 const cmp = (a, b) => (a < b ? -1 : a > b ? 1 : 0);
 
 // Order numerically (+ve integers only) if possible
 const numOrder = (a, b) => {
+  // Look for +ve integers
   const an = a.match(/\d+/);
   const bn = b.match(/\d+/);
+
+  // If both strings contain numbers order on them
   if (an && bn) return cmp(Number(an[0]), Number(bn[0]));
-  // Fall back on default
+
+  // Fall back on natural ordering
   return cmp(a, b);
 };
 
-// Use RegExps to match all items of a class
 const orderBook = fixedSort(
   [
     "Foreword",
     "Intro",
-    /^Chapter \d+/, // Match any chapter
-    /^Appendix \d+/, // Match any appendix
+    /^Chapter \d+/,
+    /^Appendix \d+/,
     "Index"
   ],
-  // Fallback ordering function
+  // Fallback to numerical ordering which,
+  // in turn, falls back to natural ordering
   numOrder
 );
 
@@ -166,11 +170,11 @@ console.log(book);
 //  ];
 ```
 
-Now Chapter 20 is in the right place.
+Now Chapter 20 is in the right place and we can handle a lot more appendices than anyone should ever consider.
 
-### Using a fixedSort as a fallback
+### Using a fixedSort as a fallback comparator
 
-The fallback function is a sort comparator function - so you can use a nested `fixedSort()` function.
+You can pass a comparator function created by `fixedSort()` as a fallback.
 
 ```javascript
 const fixedSort = require("fixed-sort");
