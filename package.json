@@ -7,6 +7,14 @@
     "test": "tap test",
     "tdd": "tap -w test"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AndyA/fixed-sort.git"
+  },
+  "bugs": {
+    "url": "https://github.com/AndyA/fixed-sort/issues"
+  },
+  "homepage": "https://github.com/AndyA/fixed-sort#readme",
   "keywords": [
     "sort",
     "order"
