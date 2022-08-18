@@ -12,8 +12,9 @@
     "isolatedModules": false,
     "incremental": true,
     "outDir": "dist/esm",
-    "declaration": true
+    "declaration": true,
+    "esModuleInterop": true
   },
   "include": ["**/*.ts"],
-  "exclude": ["node_modules", "*.test.ts", "jest.config.ts"]
+  "exclude": ["node_modules", "jest.config.ts", "dist"]
 }
