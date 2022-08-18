@@ -9,8 +9,7 @@ describe("fixedSort", () => {
   });
 
   it("should order by ranking function", () => {
-    const ranker = (val: string | number): number => {
-      if (typeof val !== "string") return 0;
+    const ranker = (val: string): number => {
       if (/xx/.test(val)) return -1;
       if (/z/.test(val)) return -2;
       if (/y/.test(val)) return -3;
@@ -61,8 +60,8 @@ describe("fixedSort", () => {
   });
 
   it("should handle a fallback sorter", () => {
-    const fs = fixedSort<string>(
-      ["first", "second", "third"],
+    const fs = fixedSort(
+      ["first", "second", "third"] as string[],
       fixedSort(
         [/^s/, /^f/],
         (a: string, b: string) =>
