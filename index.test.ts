@@ -2,7 +2,7 @@ import fixedSort from "./index";
 
 describe("fixedSort", () => {
   it("should order by literals", () => {
-    const sorter = fixedSort<string>(["one", "two", "three"]);
+    const sorter = fixedSort(["one", "two", "three"] as string[]);
     const got = ["four", "six", "one", "five", "three", "two"].sort(sorter);
     const want = ["one", "two", "three", "five", "four", "six"];
     expect(got).toEqual(want);
