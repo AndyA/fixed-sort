@@ -16,5 +16,5 @@
     "esModuleInterop": true
   },
   "include": ["**/*.ts"],
-  "exclude": ["node_modules", "jest.config.ts", "dist"]
+  "exclude": ["node_modules", "jest.config.ts", "dist/**/*"]
 }

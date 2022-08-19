@@ -2,7 +2,7 @@
 
 Make a sort comparator function for arbitrary orderings.
 
-## Fixed ordering
+# Fixed ordering
 
 The `Array.sort()` method accepts an optional comparator function. `fixedSort` generates a comparator function that will place a set of identified items at the start of the sorted data, in the order you specify, with all other items at the end of the array in natural order.
 
@@ -26,7 +26,7 @@ const ord = fixedSort([
   "ground floor",
   "first floor",
   "second floor", // unused
-  "third floor",  // unused
+  "third floor", // unused
   "attic",
   "roof"
 ]);
@@ -46,7 +46,20 @@ console.log(data);
 //  ];
 ```
 
-## Defining ordering
+# Typescript
+
+```typescript
+import fixedSort from "fixedSort";
+
+const order: string[] = ["three", "two", "one"];
+const compare = fixedSort(order); // compare is (a:string, b:string) => number
+const data = ["one", "two", "three", "A", "B", "C"];
+data.sort(compare);
+console.log(data);
+// ["three", "two", "one", "A", "B", "C"]
+```
+
+# Defining ordering
 
 In the example above the order of the sort is defined by a list of string literals. Sometimes you want to group whole classes of things together. In the next example all of a book's chapters and all of its indexes are grouped together.
 
@@ -102,9 +115,9 @@ const orderBook = fixedSort([
 ]);
 ```
 
-Predicate functions will be called once for each distinct value in the array being sorted. 
+Predicate functions will be called once for each distinct value in the array being sorted.
 
-## Fallback comparator
+# Fallback comparator
 
 The book example has a gotcha. All of the chapters are in the same group and all of the indexes are in another group. The entries within each group are sorted by their natural ordering (what you get if you call `Array.sort()` with no comparator function). That means that "Chapter 20" will come before "Chapter 3". That's not a feature of this module - it's just how lexical ordering works: "2" comes before "3".
 
@@ -143,13 +156,7 @@ const numOrder = (a, b) => {
 };
 
 const orderBook = fixedSort(
-  [
-    "Foreword",
-    "Intro",
-    /^Chapter \d+/,
-    /^Appendix \d+/,
-    "Index"
-  ],
+  ["Foreword", "Intro", /^Chapter \d+/, /^Appendix \d+/, "Index"],
   // Fallback to numerical ordering which,
   // in turn, falls back to natural ordering
   numOrder
@@ -172,7 +179,7 @@ console.log(book);
 
 Now Chapter 20 is in the right place and we can handle a lot more appendices than anyone should ever consider.
 
-### Using a fixedSort as a fallback comparator
+## Using a fixedSort as a fallback comparator
 
 You can pass a comparator function created by `fixedSort()` as a fallback.
 
@@ -188,13 +195,29 @@ console.log(data);
 //  ["yC", "xC", "yB", "xB", "yA", "xA"];
 ```
 
-### Passing a ranking function.
+## Retaining the current ordering of unranked items
+
+Perhaps you'd like to leave any items that aren't explicitly ranked in their original order. To do this you can exploit the fact that `Array.sort()` is a stable sort (for modern JS engines) - it doesn't reorder items that compare equal. If we pass a fallback comparator that always returns 0, i.e. always considers items to be equal, then their original ordering will be preserved.
+
+```javascript
+const fixedSort = require("fixed-sort");
+const data = ["Z", "Y", "X", "C", "B", "A"];
+
+// Fallback always returns 0
+const ord = fixedSort(["A", "B", "C"], () => 0);
+
+data.sort(ord);
+console.log(data);
+// ["A", "B", "C", "Z", "Y", "X"]
+```
+
+## Passing a ranking function.
 
 We saw that each entry in the ordering list can be
 
-* a literal object (not just strings)
-* a RegExp
-* a predicate function
+- a string, boolean or number
+- a RegExp
+- a predicate function
 
 For maximum flexibility, instead of passing an ordering list you may pass a function which takes each value and returns its corresponding rank in the resulting sort.
 
@@ -249,10 +272,10 @@ console.log(data);
 
 The ranking function maps values to the groups in which they belong. The values that denote groups don't have to be integers (as in the example above); in fact they don't even have to be numbers although that's often a convenient choice. The ranking function will be called once for each distinct value in the array being sorted.
 
-### Performance and memory use
+## Performance and memory use
 
-Each value in the array being sorted is resolved into its sort rank only once - even though the sort algorithm may visit it many times. The cache for these values is discarded when the function returned by `fixedSort()` goes out of scope.
+Each value in the array being sorted is resolved into its sort rank only once - even though the sort algorithm may visit it many times. The cache for these values is discarded when the comparator function returned by `fixedSort()` goes out of scope.
 
-## License
+# License
 
 [MIT](LICENSE)

@@ -1,4 +1,4 @@
-type Scalar = string | number | boolean;
+type Scalar = string | number | boolean | null;
 type Matcher<T extends Scalar> = (v: T) => boolean;
 type Ranker<T extends Scalar> = (v: T) => number;
 type PureList<T extends Scalar> = T[];
