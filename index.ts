@@ -72,11 +72,9 @@ function orderer<T extends Scalar>(m: Ranker<T>, cmp: Comparer<T>) {
 // Default comparison
 const defCmp = <T extends Scalar>(a: T, b: T) => (a < b ? -1 : a > b ? 1 : 0);
 
-function fixedSort<T extends Scalar>(
+export default function fixedSort<T extends Scalar>(
   list: FixedSortSpec<T>,
   cmp: Comparer<T> = defCmp
 ): Comparer<T> {
   return orderer<T>(makeMatcher(list), cmp);
 }
-
-export default fixedSort;
