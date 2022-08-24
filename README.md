@@ -2,9 +2,9 @@
 
 Make a sort comparator function that enforces arbitrary orderings.
 
-# Fixed ordering
+# Fixed, Arbitrary Ordering
 
-The `Array.sort()` method accepts an optional comparator function. `fixedSort` generates a comparator function that will place a set of identified items at the start of the sorted data, in the order you specify, with all other items at the end of the array in their original relative order.
+The `Array.sort()` method accepts an optional comparator function. `fixedSort` generates a comparator function that will place a set of identified items at the start of the sorted array, in the order you specify, with all other items at the end of the array in their original relative order.
 
 ```javascript
 const fixedSort = require("fixed-sort");
@@ -48,19 +48,27 @@ console.log(data);
 
 # Typescript
 
-```typescript
-import fixedSort from "fixedSort";
+In Typescript the type of the returned comparator function will, by default, be determined by the types of the items in the ordering list.
 
-const compare = fixedSort(["three", "two", "one"]); // compare is (a:string, b:string) => number
+```typescript
+import fixedSort from "fixed-sort";
+
+const compare = fixedSort(["three", "two", "one"]);
+// compare is (a:string, b:string) => number
+
 const data = ["one", "two", "three", "A", "B", "C"];
+
 data.sort(compare);
+
 console.log(data);
 // ["three", "two", "one", "A", "B", "C"]
 ```
 
-# Defining ordering
+# Defining Ordering
 
-In the example above the order of the sort is defined by a list of string literals. Sometimes you want to group whole classes of things together. In the next example all of a book's chapters and all of its indexes are grouped together.
+In the example above the order of the sort is defined by a list of string literals. Sometimes you want to group whole classes of things together. To do that you can use `RegExps` and callback functions in the list of ordering terms.
+
+In the next example the various sections of a book will be sorted appropriately.
 
 ```javascript
 const fixedSort = require("fixed-sort");
@@ -87,7 +95,8 @@ const orderBook = fixedSort([
 ]);
 
 book.sort(orderBook);
-// Getting there...
+
+// Getting there, read on...
 console.log(book);
 //  [
 //    "Foreword",
@@ -101,7 +110,11 @@ console.log(book);
 //  ];
 ```
 
-The ordering list may also include predicate functions. The above example could instead have been written using predicate functions.
+Now we have everything grouped correctly - but the chapters and appendixes are in the wrong order. Read on to find out how to solve this problem with a [fallback comparator](#fallback-comparator). Before that let's have a quick look at predicate functions.
+
+## Predicate Functions
+
+The ordering list may also include predicate functions. The above example could instead have been written like this:
 
 ```javascript
 // Use functions to match all items of a class
@@ -116,11 +129,11 @@ const orderBook = fixedSort([
 
 Predicate functions will be called once for each distinct value in the array being sorted.
 
-# Fallback comparator
+# Fallback Comparator
 
-The book example above groups the chapters and indexes but items within those groups are in their original relative order.
+The [book example](#defining-ordering) above groups the chapters and indexes but items within those groups are in their original relative order. We want them in numeric order.
 
-We can fix it by providing a fallback comparator function which looks for embedded numbers and orders by them if possible. Here's the corrected code.
+We can fix that by providing a fallback comparator function which looks for embedded numbers and orders by them if possible. Here's the corrected code.
 
 ```javascript
 const fixedSort = require("fixed-sort");
@@ -162,6 +175,8 @@ const orderBook = fixedSort(
 );
 
 book.sort(orderBook);
+
+// Now everything is in the right place.
 console.log(book);
 //  [
 //    "Foreword",
@@ -176,9 +191,7 @@ console.log(book);
 //  ];
 ```
 
-Now Chapter 20 is in the right place and we can handle a lot more appendices than anyone should ever consider.
-
-## Using a fixedSort as a fallback comparator
+## Using a fixedSort as a Fallback Comparator
 
 You can pass a comparator function created by `fixedSort()` as a fallback.
 
@@ -194,15 +207,15 @@ console.log(data);
 //  ["yC", "xC", "yB", "xB", "xA", "yA"];
 ```
 
-## Passing a ranking function.
+# Passing a Ranking Function
 
 We saw that each entry in the ordering list can be
 
-- a literal value
+- a literal value: any type apart from
 - a RegExp
 - a predicate function
 
-For maximum flexibility, instead of passing an ordering list you may pass a function which takes each value and returns its corresponding rank in the resulting sort.
+For maximum flexibility, instead of passing an ordering list you may pass a function which takes each value being compared and returns its corresponding sort rank.
 
 This highly contrived ranker sorts in this order:
 
@@ -234,6 +247,7 @@ const ranker = v => {
 
 // No practical use is known for this...
 data.sort(fixedSort(ranker));
+
 console.log(data);
 //  [
 //    7,     // odd positive integers
@@ -253,11 +267,11 @@ console.log(data);
 //  ];
 ```
 
-The ranking function maps values to the groups in which they belong. It should return a numeric value corresponding to the rank of the supplied term. A negative rank will place those items at the start of the sorted list. Unmatched items have a default rank of 0. Positive ranks place the corresponding items at the end of the sorted list after any unmatched items.
+The ranking function maps values to the groups in which they belong. It should return a number corresponding to the rank of the supplied term. Lower values will sort earlier.
 
-The ranking function will be called once for each distinct value in the array being sorted.
+The ranking function will be called once for each distinct value in the array being sorted. It must be a pure function: for any given input it must always return the same value.
 
-## Performance and memory use
+# Performance and Memory Use
 
 Each value in the array being sorted is resolved into its sort rank only once - even though the sort algorithm may visit it many times. The cache for these values is discarded when the comparator function returned by `fixedSort()` goes out of scope.
 
