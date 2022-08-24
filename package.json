@@ -1,6 +1,6 @@
 {
   "name": "fixed-sort",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Comparison functions with fixed ordering for selected values.",
   "type": "module",
   "scripts": {
