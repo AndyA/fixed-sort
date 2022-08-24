@@ -1,10 +1,10 @@
 # fixed-sort
 
-Make a sort comparator function for arbitrary orderings.
+Make a sort comparator function that enforces arbitrary orderings.
 
 # Fixed ordering
 
-The `Array.sort()` method accepts an optional comparator function. `fixedSort` generates a comparator function that will place a set of identified items at the start of the sorted data, in the order you specify, with all other items at the end of the array in natural order.
+The `Array.sort()` method accepts an optional comparator function. `fixedSort` generates a comparator function that will place a set of identified items at the start of the sorted data, in the order you specify, with all other items at the end of the array in their original relative order.
 
 ```javascript
 const fixedSort = require("fixed-sort");
@@ -41,7 +41,7 @@ console.log(data);
 //    "first floor",
 //    "attic",
 //    "roof",         // end of matched items
-//    "garage",       // unmatched items in natural order
+//    "garage",       // unmatched items in original order
 //    "shed"
 //  ];
 ```
@@ -51,8 +51,7 @@ console.log(data);
 ```typescript
 import fixedSort from "fixedSort";
 
-const order: string[] = ["three", "two", "one"];
-const compare = fixedSort(order); // compare is (a:string, b:string) => number
+const compare = fixedSort(["three", "two", "one"]); // compare is (a:string, b:string) => number
 const data = ["one", "two", "three", "A", "B", "C"];
 data.sort(compare);
 console.log(data);
@@ -88,14 +87,14 @@ const orderBook = fixedSort([
 ]);
 
 book.sort(orderBook);
-// That's better
+// Getting there...
 console.log(book);
 //  [
 //    "Foreword",
 //    "Intro",
+//    "Chapter 3",
 //    "Chapter 1",
 //    "Chapter 2",
-//    "Chapter 3",
 //    "Appendix 1",
 //    "Appendix 2",
 //    "Index"
@@ -119,7 +118,7 @@ Predicate functions will be called once for each distinct value in the array bei
 
 # Fallback comparator
 
-The book example has a gotcha. All of the chapters are in the same group and all of the indexes are in another group. The entries within each group are sorted by their natural ordering (what you get if you call `Array.sort()` with no comparator function). That means that "Chapter 20" will come before "Chapter 3". That's not a feature of this module - it's just how lexical ordering works: "2" comes before "3".
+The book example above groups the chapters and indexes but items within those groups are in their original relative order.
 
 We can fix it by providing a fallback comparator function which looks for embedded numbers and orders by them if possible. Here's the corrected code.
 
@@ -157,8 +156,8 @@ const numOrder = (a, b) => {
 
 const orderBook = fixedSort(
   ["Foreword", "Intro", /^Chapter \d+/, /^Appendix \d+/, "Index"],
-  // Fallback to numerical ordering which,
-  // in turn, falls back to natural ordering
+  // Fallback to numerical ordering which in turn falls back to
+  // lexical ordering
   numOrder
 );
 
@@ -192,30 +191,14 @@ const ordCByx = fixedSort([/C/, /B/], fixedSort([/y/, /x/]));
 
 data.sort(ordCByx);
 console.log(data);
-//  ["yC", "xC", "yB", "xB", "yA", "xA"];
-```
-
-## Retaining the current ordering of unranked items
-
-Perhaps you'd like to leave any items that aren't explicitly ranked in their original order. To do this you can exploit the fact that `Array.sort()` is a stable sort (for modern JS engines) - it doesn't reorder items that compare equal. If we pass a fallback comparator that always returns 0, i.e. always considers items to be equal, then their original ordering will be preserved.
-
-```javascript
-const fixedSort = require("fixed-sort");
-const data = ["Z", "Y", "X", "C", "B", "A"];
-
-// Fallback always returns 0
-const ord = fixedSort(["A", "B", "C"], () => 0);
-
-data.sort(ord);
-console.log(data);
-// ["A", "B", "C", "Z", "Y", "X"]
+//  ["yC", "xC", "yB", "xB", "xA", "yA"];
 ```
 
 ## Passing a ranking function.
 
 We saw that each entry in the ordering list can be
 
-- a string, boolean or number
+- a literal value
 - a RegExp
 - a predicate function
 
@@ -270,7 +253,9 @@ console.log(data);
 //  ];
 ```
 
-The ranking function maps values to the groups in which they belong. The values that denote groups don't have to be integers (as in the example above); in fact they don't even have to be numbers although that's often a convenient choice. The ranking function will be called once for each distinct value in the array being sorted.
+The ranking function maps values to the groups in which they belong. It should return a numeric value corresponding to the rank of the supplied term. A negative rank will place those items at the start of the sorted list. Unmatched items have a default rank of 0. Positive ranks place the corresponding items at the end of the sorted list after any unmatched items.
+
+The ranking function will be called once for each distinct value in the array being sorted.
 
 ## Performance and memory use
 

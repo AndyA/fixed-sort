@@ -2,9 +2,9 @@ import fixedSort from "./index";
 
 describe("fixedSort", () => {
   it("should order by literals", () => {
-    const sorter = fixedSort(["one", "two", "three"] as string[]);
+    const sorter = fixedSort(["one", "two", "three"]);
     const got = ["four", "six", "one", "five", "three", "two"].sort(sorter);
-    const want = ["one", "two", "three", "five", "four", "six"];
+    const want = ["one", "two", "three", "four", "six", "five"];
     expect(got).toEqual(want);
   });
 
@@ -23,8 +23,8 @@ describe("fixedSort", () => {
     ].flat();
 
     const want = [
-      ["x", "xy", "y", "xyz", "xz"],
-      ["yz", "z", "xxyz", "a", "bb", "c"]
+      ["x", "y", "xy", "z", "xz", "yz"],
+      ["xyz", "xxyz", "c", "a", "bb"]
     ].flat();
 
     const fs = fixedSort(ranker);
@@ -41,9 +41,9 @@ describe("fixedSort", () => {
 
     const want = [
       ["ElementIssue", "ElementPage", "ModelIssue"],
-      ["ModelPage", "FrippoIssue", "FrippoPage"],
-      [1, 1, 2, 3, 3, 9],
-      ["HEADER", "HEADER", "Andy", "Pizzo", "Smoo"]
+      ["ModelPage", "FrippoPage", "FrippoIssue"],
+      [1, 3, 3, 2, 9, 1],
+      ["HEADER", "HEADER", "Smoo", "Andy", "Pizzo"]
     ].flat();
 
     const isNumber = (v: any): boolean => typeof v === "number";
@@ -61,7 +61,7 @@ describe("fixedSort", () => {
 
   it("should handle a fallback sorter", () => {
     const fs = fixedSort(
-      ["first", "second", "third"] as string[],
+      ["first", "second", "third"],
       fixedSort(
         [/^s/, /^f/],
         (a: string, b: string) =>
@@ -84,10 +84,7 @@ describe("fixedSort", () => {
   });
 
   it("should handle a fallbacks that interact", () => {
-    const fs = fixedSort<string>(
-      [/C/, /B/, /A/],
-      fixedSort<string>([/z/, /y/, /x/])
-    );
+    const fs = fixedSort([/C/, /B/, /A/], fixedSort<string>([/z/, /y/, /x/]));
     const data = [
       ["wA", "wB", "wC", "wD", "xA", "xB", "xC", "xD"],
       ["yA", "yB", "yC", "yD", "zA", "zB", "zC", "zD"]
@@ -102,7 +99,7 @@ describe("fixedSort", () => {
   });
 
   it("should respect the first instance of a value", () => {
-    const fs = fixedSort<string>(["C", "B", "A", "B", "C"]);
+    const fs = fixedSort(["C", "B", "A", "B", "C"]);
     const data = ["A", "B", "C", "_"];
     const want = ["C", "B", "A", "_"];
     data.sort(fs);
