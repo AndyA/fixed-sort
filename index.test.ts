@@ -105,4 +105,17 @@ describe("fixedSort", () => {
     data.sort(fs);
     expect(data).toEqual(want);
   });
+
+  // Negative
+  it("should throw if ranker returns a non-number", () => {
+    const ranker = (v: string): number => {
+      // @ts-ignore we want the runtime fail
+      if (v === "B") return "X";
+      return -v.length;
+    };
+
+    const fs = fixedSort(ranker);
+    const data = ["A", "AA", "AAA", "BB", "B"];
+    expect(() => data.sort(fs)).toThrow(/should have/i);
+  });
 });
