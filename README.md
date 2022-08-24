@@ -226,7 +226,7 @@ This highly contrived ranker sorts in this order:
 5. positive non-integers
 6. anything else
 7. even negative integers
-8. even positive integers
+8. odd negative integers
 
 ```javascript
 const fixedSort = require("fixed-sort");
