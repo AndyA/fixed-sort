@@ -80,10 +80,14 @@ describe("fixedSort", () => {
     ].flat();
 
     data.sort(fs);
+    expect(data).toEqual(want);
   });
 
   it("should handle a fallbacks that interact", () => {
-    const fs = fixedSort([/C/, /B/, /A/], fixedSort([/z/, /y/, /x/]));
+    const fs = fixedSort<string>(
+      [/C/, /B/, /A/],
+      fixedSort<string>([/z/, /y/, /x/])
+    );
     const data = [
       ["wA", "wB", "wC", "wD", "xA", "xB", "xC", "xD"],
       ["yA", "yB", "yC", "yD", "zA", "zB", "zC", "zD"]
@@ -94,5 +98,14 @@ describe("fixedSort", () => {
     ].flat();
 
     data.sort(fs);
+    expect(data).toEqual(want);
+  });
+
+  it("should respect the first instance of a value", () => {
+    const fs = fixedSort<string>(["C", "B", "A", "B", "C"]);
+    const data = ["A", "B", "C", "_"];
+    const want = ["C", "B", "A", "_"];
+    data.sort(fs);
+    expect(data).toEqual(want);
   });
 });

@@ -27,9 +27,20 @@ function predMatcher<T extends Scalar>(list: Matcher<T>[]) {
   };
 }
 
+function unique<T>(list: T[]): T[] {
+  const seen = new Set<T>();
+  const first = (elt: T) => {
+    if (seen.has(elt)) return false;
+    seen.add(elt);
+    return true;
+  };
+  return list.filter(first);
+}
+
 function rankMatcher<T extends Scalar>(list: T[]) {
+  const terms = unique(list);
   const ranks: Map<T, number> = new Map(
-    list.map((t: T, i: number) => [t, i - list.length])
+    terms.map((t: T, i: number) => [t, i - terms.length])
   );
   return (v: T) => ranks.get(v) || 0;
 }
