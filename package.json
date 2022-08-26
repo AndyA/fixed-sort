@@ -1,6 +1,6 @@
 {
   "name": "fixed-sort",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Comparison functions with fixed ordering for selected values.",
   "type": "commonjs",
   "scripts": {
