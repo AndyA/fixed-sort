@@ -2,7 +2,7 @@
   "name": "fixed-sort",
   "version": "1.0.6",
   "description": "Comparison functions with fixed ordering for selected values.",
-  "type": "module",
+  "type": "commonjs",
   "scripts": {
     "build": "rm -rf dist && npm run build:tsc && npm run build:cjs",
     "build:tsc": "tsc",
